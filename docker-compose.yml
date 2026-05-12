@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  # ── Nextcloud (Google Drive replacement) ────────────────
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud
+    ports:
+      - "8080:80"
+    volumes:
+      - nextcloud_data:/var/www/html
+      - ./nextcloud-files:/var/www/html/data
+    environment:
+      - SQLITE_DATABASE=nextcloud
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=changeme123
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost
+    restart: unless-stopped
+
+  # ── Vaultwarden (Password Manager) ──────────────────────
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    ports:
+      - "8081:80"
+    volumes:
+      - vaultwarden_data:/data
+    environment:
+      - SIGNUPS_ALLOWED=true
+      - DOMAIN=http://localhost:8081
+    restart: unless-stopped
+
+  # ── Jellyfin (Media Server) ─────────────────────────────
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - jellyfin_config:/config
+      - jellyfin_cache:/cache
+      - ./media:/media
+    restart: unless-stopped
+
+  # ── Uptime Kuma (Monitoring) ────────────────────────────
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    ports:
+      - "3001:3001"
+    volumes:
+      - uptime_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  nextcloud_data:
+  vaultwarden_data:
+  jellyfin_config:
+  jellyfin_cache:
+  uptime_data:
