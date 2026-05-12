@@ -1,7 +1,4 @@
-version: "3.8"
-
 services:
-  # ── Nextcloud (Google Drive replacement) ────────────────
   nextcloud:
     image: nextcloud:latest
     container_name: nextcloud
@@ -17,7 +14,6 @@ services:
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost
     restart: unless-stopped
 
-  # ── Vaultwarden (Password Manager) ──────────────────────
   vaultwarden:
     image: vaultwarden/server:latest
     container_name: vaultwarden
@@ -28,9 +24,9 @@ services:
     environment:
       - SIGNUPS_ALLOWED=true
       - DOMAIN=http://localhost:8081
+      - ADMIN_TOKEN=myadmintoken123
     restart: unless-stopped
 
-  # ── Jellyfin (Media Server) ─────────────────────────────
   jellyfin:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
@@ -42,7 +38,6 @@ services:
       - ./media:/media
     restart: unless-stopped
 
-  # ── Uptime Kuma (Monitoring) ────────────────────────────
   uptime-kuma:
     image: louislam/uptime-kuma:latest
     container_name: uptime-kuma
